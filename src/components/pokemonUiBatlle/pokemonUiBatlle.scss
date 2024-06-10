@@ -1,0 +1,67 @@
+.info {
+  border: solid 10px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 420px;
+  margin-left: 20%;
+  padding: 5px;
+
+  .info-up {
+    display: flex;
+    justify-content: space-between;
+
+    h3,
+    p {
+      font-size: 25px;
+    }
+  }
+
+  .hp-bar {
+    display: flex;
+    gap: 5px;
+    background-color: #43695c;
+    border-radius: 5px;
+    padding: 5px;
+    justify-content: flex-end;
+    margin-left: 25%;
+
+    p {
+      font-size: 20px;
+      color: #f4ad3d;
+    }
+
+    .hp {
+      background: #7df39d;
+      width: 100%;
+    }
+  }
+}
+
+.sprite {
+  margin-left: 50%;
+  img {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+.player-sprite {
+  margin-left: 25%;
+}
+
+.player-info {
+  margin-left: 50%;
+}
+
+.player-menu {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(2, 200px);
+  justify-content: center;
+  gap: 15px;
+
+  button {
+    background-color: aqua;
+    font-size: 30px;
+  }
+}
