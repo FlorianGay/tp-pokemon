@@ -1,4 +1,4 @@
-// Dans votre fichier pokemonContext.jsx
+
 
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
@@ -16,7 +16,6 @@ export const PokemonProvider = ({ children }) => {
         );
         const pokemonData = response.data.results;
 
-        // Fetch details for each Pokemon, including attack details
         const detailedPokemonPromises = pokemonData.map((pokemon) =>
           axios.get(pokemon.url)
         );
@@ -27,7 +26,6 @@ export const PokemonProvider = ({ children }) => {
           (res) => res.data
         );
 
-        // Fetch attack details for each Pokemon
         const pokemonWithAttackDetailsPromises = detailedPokemonData.map(
           async (pokemon) => {
             const response = await axios.get(pokemon.moves[0].move.url);
