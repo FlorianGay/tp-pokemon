@@ -13,7 +13,8 @@ const PokemonChoice = () => {
     setPokemonName(event.target.value.toLowerCase())
   }
 
-  const handleChoosePokemon = () => {
+  const handleChoosePokemon = (e) => {
+    e.preventDefault()
     const selected =
       generationOnePokemon &&
       generationOnePokemon.find((pokemon) => pokemon.name === pokemonName)
