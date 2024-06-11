@@ -1,0 +1,71 @@
+.pokemon-choice-container {
+  text-align: center;
+  font-family: 'Pokemon', sans-serif;
+}
+
+.pokemon-choice-input {
+  margin-bottom: 20px;
+}
+
+.pokemon-choice-input input {
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.pokemon-choice-input button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #f8d030;
+  border: none;
+  border-radius: 5px;
+}
+
+.pokemon-choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pokemon-choice-item {
+  cursor: pointer;
+  text-align: center;
+}
+
+.pokemon-choice-image {
+  width: 100px;
+  height: 100px;
+}
+
+.pokemon-choice-result {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pokemon {
+  width: 45%;
+}
+
+.pokemon img {
+  width: 150px;
+  height: auto;
+}
+
+.pokemon h3, .pokemon p, .pokemon h4, .pokemon li {
+  color: #000;
+  text-shadow: 1px 1px 2px #fff;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #f8d030;
+  border: none;
+  border-radius: 5px;
+  margin-top: 20px;
+}
