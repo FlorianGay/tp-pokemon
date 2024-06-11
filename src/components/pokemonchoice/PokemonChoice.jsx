@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext, useState } from "react";
 import { PokemonContext } from "../../context/pokemonContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 import "./PokemonChoice.css";
+import { useNavigate } from 'react-router-dom'
+
 
 const PokemonChoice = () => {
   const { generationOnePokemon } = useContext(PokemonContext);
@@ -13,6 +16,12 @@ const PokemonChoice = () => {
   const [computerPokemonMoves, setComputerPokemonMoves] = useState([]);
   const [isDuelStarted, setIsDuelStarted] = useState(false);
   const [isComputerChosen, setIsComputerChosen] = useState(false);
+  const [audio] = useState(new Audio('https://cdn.discordapp.com/attachments/1241083996721643520/1250029362900635668/battle.mp3?ex=66697410&is=66682290&hm=8e97ad5fc57daef1a5583fe69c1940410abe2d63312805a47d460ee43267868b&')); // Define audio
+
+ 
+
+  const navigate = useNavigate();
+
 
   const handleChange = (event) => {
     setPokemonName(event.target.value.toLowerCase());
@@ -60,10 +69,22 @@ const PokemonChoice = () => {
 
   const startDuel = () => {
     setIsDuelStarted(true);
+      audio.play();
     setTimeout(() => {
-      window.location.href = "/battle";
+      audio.pause();
+      navigate("/battle", {state: {selectedPokemon, computerPokemon, selectedPokemonMoves}});
     }, 5000); 
   };
+
+  const handleBack = () => {
+    setIsComputerChosen(false);
+    setSelectedPokemon(null);
+    setComputerPokemon(null);
+    setPokemonName("");
+    setSelectedPokemonMoves([]);
+    setComputerPokemonMoves([]);
+  };
+
 
   return (
     <div className="pokemon-choice-container">
@@ -101,7 +122,12 @@ const PokemonChoice = () => {
 
       {isComputerChosen && (
         <div className="pokemon-choice-result">
-          <div className="pokemon player">
+          <motion.div
+            className="pokemon player"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             {selectedPokemon && (
               <div>
                 <h3>{selectedPokemon.name}</h3>
@@ -111,6 +137,7 @@ const PokemonChoice = () => {
                       src={selectedPokemon.sprites.front_default}
                       alt={selectedPokemon.name}
                       className="pokemon-attack"
+                      id="selected-pokemon"
                     />
                   )}
                 <p>Type: {selectedPokemon.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
@@ -118,7 +145,7 @@ const PokemonChoice = () => {
                 <p>Attack: {selectedPokemon.stats.find(stat => stat.stat.name === 'attack').base_stat}</p>
                 <p>Defense: {selectedPokemon.stats.find(stat => stat.stat.name === 'defense').base_stat}</p>
                 <p>Speed: {selectedPokemon.stats.find(stat => stat.stat.name === 'speed').base_stat}</p>
-                <h4>Attaques:</h4>
+                <h4>Moves:</h4>
                 <ul>
                   {selectedPokemonMoves.map((move, index) => (
                     <li key={index}>
@@ -128,8 +155,13 @@ const PokemonChoice = () => {
                 </ul>
               </div>
             )}
-          </div>
-          <div className="pokemon computer">
+          </motion.div>
+          <motion.div
+            className="pokemon computer"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             {computerPokemon && (
               <div>
                 <h3>{computerPokemon.name}</h3>
@@ -139,6 +171,7 @@ const PokemonChoice = () => {
                       src={computerPokemon.sprites.front_default}
                       alt={computerPokemon.name}
                       className="pokemon-attack"
+                      id="computer-pokemon"
                     />
                   )}
                 <p>Type: {computerPokemon.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
@@ -146,7 +179,7 @@ const PokemonChoice = () => {
                 <p>Attack: {computerPokemon.stats.find(stat => stat.stat.name === 'attack').base_stat}</p>
                 <p>Defense: {computerPokemon.stats.find(stat => stat.stat.name === 'defense').base_stat}</p>
                 <p>Speed: {computerPokemon.stats.find(stat => stat.stat.name === 'speed').base_stat}</p>
-                <h4>Attaques:</h4>
+                <h4>Moves:</h4>
                 <ul>
                   {computerPokemonMoves.map((move, index) => (
                     <li key={index}>
@@ -156,12 +189,15 @@ const PokemonChoice = () => {
                 </ul>
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
 
       {isComputerChosen && selectedPokemon && computerPokemon && (
-        <button onClick={startDuel}>Commencer le duel</button>
+        <div className="action-buttons">
+          <button onClick={startDuel}>Commencer le duel</button>
+          <button onClick={handleBack}>Retour</button>
+        </div>
       )}
     </div>
   );

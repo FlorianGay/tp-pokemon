@@ -1,13 +1,143 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+import { useState, useEffect, useCallback } from 'react'
 import './battle.scss'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
 
 function Battle() {
+  const location = useLocation()
+  const { selectedPokemon, computerPokemon, selectedPokemonMoves } = location.state
+  const [moveDetails, setMoveDetails] = useState([])
+
+
+  const [computerHP, setComputerHP] = useState(computerPokemon.stats[0].base_stat)
+  const [userHP, setUserHP] = useState(selectedPokemon.stats[0].base_stat)
+
+  const [isUserTurn, setIsUserTurn] = useState(true)
+  const [battleResult, setBattleResult] = useState('')
+
+//   const handleUserAction = (move) => {
+//     const power = selectedPokemonMoves.find((m) => m.name === move).power
+//     const damage = Math.floor(power *(Math.random() * 0.5 + 0.5))
+//     setcomputerHP(prevHP => Math.max(0, prevHP - damage))
+//     console.log(computerHP)
+//     setIsUserTurn(false)
+//     setTimeout(handleComputerAction, 1000)
+//   }
+//   const handleComputerAction = (move) =>{
+//     const randomMove = computerPokemon.moves[Math.floor(Math.random()*computerPokemon.moves.length)]
+//     const power = randomMove.power
+//     const damage = Math.floor(power *(Math.random() * 0.5 + 0.5))
+//     setUserHP (prevHP => Math.max(0, prevHP - damage))
+//     console.log(userHP)
+//     setIsUserTurn(true)
+//   }
+
+console.log(selectedPokemonMoves)
+console.log(moveDetails)
+
+  useEffect(() => {
+    const fetchAllMovesDetails = async () => {
+      const movesData = await Promise.all(
+        selectedPokemonMoves.map(async (move) => {
+          const response = await axios.get(`https://pokeapi.co/api/v2/move/${move.name}/`)
+          return response.data
+        })
+      )
+      setMoveDetails(movesData)
+    }
+    fetchAllMovesDetails()
+  }, [])
+
+  
+
+
+
+//   useEffect(() => {
+//     if (userHP === 0 || computerHP === 0) {
+//       if (userHP === 0 && computerHP === 0) {
+//         setBattleResult('Egalite')
+//         console.log(battleResult)
+//       } else if (userHP === 0) {
+//         setBattleResult('Perdu')
+//         console.log(battleResult)
+
+//       } else if (computerHP === 0) {
+//         setBattleResult('Gagne')
+//         console.log(battleResult)
+
+//       } else {
+//         if (!isUserTurn){
+//           handleComputerAction()
+//         }
+//       }
+      
+//     }}, [isUserTurn, userHP, computerHP, handleComputerAction])
+
+
+const userTurn = (move) => {
+    console.log('tour de l utilisateur')
+    console.log(move)
+    let userAtk = null 
+    let userDef = null 
+    const power = move.power
+    if (move.damage_class === 'physical') {
+        userAtk = selectedPokemon.stats[1].base_stat
+        userDef = selectedPokemon.stats[2].base_stat
+    } else {
+        userAtk = selectedPokemon.stats[3].base_stat
+        userDef = selectedPokemon.stats[4].base_stat
+    }
+
+    const damage = ((userAtk * power) / (userDef * 50 )) + 2
+    setComputerHP(computerHP - damage)
+
+    if (computerHP != 0) {
+        opponentTurn()
+    } else {
+        return <h1>{selectedPokemon.name} a gagné !</h1>
+    }
+}
+
+const opponentTurn = () => {
+    console.log('tour de l opposant')
+
+    let opponentAtk = null
+    let opponentDef = null
+    const randomMove = computerPokemon.moves[Math.floor(Math.random()*computerPokemon.moves.length)]
+    const power = randomMove.power
+    if (randomMove.damage_class === 'physical') {
+         opponentAtk = computerPokemon.stats[1].base_stat
+         opponentDef = computerPokemon.stats[2].base_stat
+    } else {
+         opponentAtk=computerPokemon.stats[3].base_stat
+         opponentDef=computerPokemon.stats[4].base_stat
+    }
+
+    const damage = ((opponentAtk * power) / (opponentDef * 50 )) + 2
+    setUserHP(userHP - damage)
+
+    if (userHP != 0) {
+        userTurn()
+    } else {
+        return <h1>{computerPokemon.name} a gagné !</h1>
+    }
+}
+
+const handleTurn = (move) => {
+    console.log(move)
+    userTurn(move)
+}
+
   return (
     <main>
       <section className="opponent">
         <div className="info">
           <div className="info-up">
-            <h3>Mewtwo</h3>
-            <p>Lv5</p>
+            <h3>{computerPokemon.name}</h3>
+            <p>Lv {computerPokemon.weight}</p>
           </div>
 
           <div className="hp-bar">
@@ -18,7 +148,7 @@ function Battle() {
 
         <div className="sprite">
           <img
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/shiny/150.gif"
+            src={computerPokemon.sprites.other.showdown.front_default}
             alt=""
           />
         </div>
@@ -27,21 +157,21 @@ function Battle() {
       <section className="user">
         <div className=" sprite">
           <img
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/151.gif"
+            src={selectedPokemon.sprites.other.showdown.back_default}
             alt=""
           />
         </div>
 
         <div className=" info">
           <div className="info-up">
-            <h3>Mew</h3>
-            <p>Lv5</p>
+            <h3>{selectedPokemon.name}</h3>
+            <p>Lv {selectedPokemon.weight}</p>
           </div>
 
           <div className="hp-bar">
             <p>HP</p>
             <div className="hp"></div>
-            <p>20/20</p>
+            <p>{selectedPokemon.stats[0].base_stat}</p>
           </div>
         </div>
       </section>
@@ -49,7 +179,7 @@ function Battle() {
       <section className="user-menu">
         <div className="menu-description">
           <p>
-            Que doit faire <br /> Mew ?
+            Que doit faire <br /> {selectedPokemon.name} ?
           </p>
         </div>
         <div className="menu-option">
@@ -62,28 +192,29 @@ function Battle() {
 
       <div className="menu-attaque">
         <div className="attaque-option">
-          <button>Psyko</button>
-          <button>Soin</button>
-          <button>Rafale Psy</button>
-          <button>Metronome</button>
-        </div>
-        <div className="description-attaque">
-          <div>
-            <span>Type</span>
-            <span>Type</span>
-          </div>
-          <div>
-            <p>PP</p>
-            <p>10/10</p>
-          </div>
-          <div>
-            <p>Puissance</p>
-            <p>90</p>
-          </div>
-          <div>
-            <p>Précision</p>
-            <p>100</p>
-          </div>
+        {moveDetails.map((moveData) => (
+            <div className='attaque' key={moveData.id}>
+              <button onClick={() => handleTurn(moveData)}> {moveData.name} </button>
+                <div className="description-attaque">
+                <div>
+                  <span>{moveData.type.name}</span>
+                  <span>{moveData.damage_class.name}</span>
+                </div>
+                <div>
+                  <p>PP</p>
+                  <p>{moveData.pp} / {moveData.pp}</p>
+                </div>
+                <div>
+                  <p>Puissance</p>
+                  <p>{moveData.power}</p>
+                </div>
+                <div>
+                  <p>Précision</p>
+                  <p>{moveData.accuracy}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </main>
