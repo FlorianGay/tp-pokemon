@@ -10,6 +10,7 @@ function Battle() {
   const location = useLocation()
   const { selectedPokemon, computerPokemon, selectedPokemonMoves } = location.state
   const [moveDetails, setMoveDetails] = useState([])
+  const pokemonLevel = 50
 
 
   const [computerHP, setComputerHP] = useState(computerPokemon.stats[0].base_stat)
@@ -35,8 +36,6 @@ function Battle() {
 //     setIsUserTurn(true)
 //   }
 
-console.log(selectedPokemonMoves)
-console.log(moveDetails)
 
   useEffect(() => {
     const fetchAllMovesDetails = async () => {
@@ -50,10 +49,6 @@ console.log(moveDetails)
     }
     fetchAllMovesDetails()
   }, [])
-
-  
-
-
 
 //   useEffect(() => {
 //     if (userHP === 0 || computerHP === 0) {
@@ -81,17 +76,19 @@ const userTurn = (move) => {
     console.log('tour de l utilisateur')
     console.log(move)
     let userAtk = null 
-    let userDef = null 
+    let opponentDef = null 
     const power = move.power
     if (move.damage_class === 'physical') {
         userAtk = selectedPokemon.stats[1].base_stat
-        userDef = selectedPokemon.stats[2].base_stat
+        opponentDef = computerPokemon.stats[2].base_stat
     } else {
         userAtk = selectedPokemon.stats[3].base_stat
-        userDef = selectedPokemon.stats[4].base_stat
+        opponentDef = computerPokemon.stats[4].base_stat
     }
 
-    const damage = ((userAtk * power) / (userDef * 50 )) + 2
+    const damage = (userAtk * power) / (opponentDef * 50 ) + 2
+    console.log(userAtk, power, opponentDef)
+    console.log(damage)
     setComputerHP(computerHP - damage)
 
     if (computerHP != 0) {
@@ -103,20 +100,20 @@ const userTurn = (move) => {
 
 const opponentTurn = () => {
     console.log('tour de l opposant')
-
     let opponentAtk = null
-    let opponentDef = null
+    let userDef = null
     const randomMove = computerPokemon.moves[Math.floor(Math.random()*computerPokemon.moves.length)]
     const power = randomMove.power
     if (randomMove.damage_class === 'physical') {
          opponentAtk = computerPokemon.stats[1].base_stat
-         opponentDef = computerPokemon.stats[2].base_stat
+         userDef = selectedPokemon.stats[2].base_stat
     } else {
-         opponentAtk=computerPokemon.stats[3].base_stat
-         opponentDef=computerPokemon.stats[4].base_stat
+         opponentAtk = computerPokemon.stats[3].base_stat
+         userDef = selectedPokemon.stats[4].base_stat
     }
 
-    const damage = ((opponentAtk * power) / (opponentDef * 50 )) + 2
+    const damage = ((opponentAtk * power) / (userDef * 50 )) + 2
+    console.log(damage)
     setUserHP(userHP - damage)
 
     if (userHP != 0) {
@@ -137,7 +134,7 @@ const handleTurn = (move) => {
         <div className="info">
           <div className="info-up">
             <h3>{computerPokemon.name}</h3>
-            <p>Lv {computerPokemon.weight}</p>
+            <p>Lv {pokemonLevel}</p>
           </div>
 
           <div className="hp-bar">
@@ -165,7 +162,7 @@ const handleTurn = (move) => {
         <div className=" info">
           <div className="info-up">
             <h3>{selectedPokemon.name}</h3>
-            <p>Lv {selectedPokemon.weight}</p>
+            <p>Lv {pokemonLevel}</p>
           </div>
 
           <div className="hp-bar">
